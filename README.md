@@ -222,3 +222,8 @@ student@cp:˜$ less .kube/config
 <exit and log back in>
 master@cp:˜$ source <(kubectl completion bash)
 master@cp:˜$ echo "source <(kubectl completion bash)" >> $HOME/.bashrc </code> </pre>
+
+<ul> <li>  Test by describing the node again. Type the first three letters of the sub-command then type the Tab key. Auto-completion assumes the default namespace. Pass the namespace first to use auto-completion with a different namespace. By pressing Tab multiple times you will see a list of possible values. Continue typing until a unique name is used. First look at the current node (your node name may not start with cp), then look at pods in the kube-system namespace. If you see an error instead such as -bash: _get_comp_words_by_ref: command not found revisit the previous step, install the software, log out and back in. </ul> </li> 
+
+<pre class="notranslate"><code>   master@cp:˜$ kubectl des<Tab> n<Tab><Tab> cp<Tab>
+master@cp:˜$ kubectl -n kube-s<Tab> g<Tab> po<Tab>  </code> </pre>
