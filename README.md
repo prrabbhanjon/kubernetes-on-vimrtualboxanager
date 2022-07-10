@@ -1,4 +1,4 @@
-# Kubernetes-on-vimrtualboxmanager
+# Kubernetes-on-virtualbox-manager
 
 **How to install kubernetes on virtualbox VMs.**
 
