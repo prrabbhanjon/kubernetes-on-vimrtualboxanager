@@ -124,7 +124,7 @@ root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-
 <ul> <li>   The network must allow container-to-container, pod-to-pod, pod-to-service, and external-to-service communications. As Docker uses host-private networking, using the docker0 virtual bridge and veth interfaces would require being on that host to communicate.</li> </ul> 
 <ul> <li>   We will use Calico as a network plugin which will allow us to use Network Policies later in the course. Currently Calico does not deploy using CNI by default. Newer versions of Calico have included RBAC in the main file. Once downloaded look for the expected IPV4 range for containers to use in the configuration file.</li> </ul> 
   
-  root@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml
+  master@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml
 <ul> <li> Use less to page through the file. Look for the IPV4 pool assigned to the containers. There are many different configuration settings in this file. Take a moment to view the entire file. The CALICO_IPV4POOL_CIDR must match the value given to kubeadm init in the following step, whatever the value may be. Avoid conflicts with existing IP ranges of the instance. </li> </ul> 
 root@cp:˜# less calico.yaml
   
@@ -227,3 +227,16 @@ master@cp:˜$ echo "source <(kubectl completion bash)" >> $HOME/.bashrc </code> 
 
 <pre class="notranslate"><code>   master@cp:˜$ kubectl des<Tab> n<Tab><Tab> cp<Tab>
 master@cp:˜$ kubectl -n kube-s<Tab> g<Tab> po<Tab>  </code> </pre>
+
+<h3> View other values we could have included in the kubeadm-config.yaml file when creating the cluster </h3>
+<pre class="notranslate"><code>  master@cp:˜$ sudo kubeadm config print init-defaults
+1 apiVersion: kubeadm.k8s.io/v1beta2
+2 bootstrapTokens:
+3 - groups:
+4 - system:bootstrappers:kubeadm:default-node-token
+5 token: abcdef.0123456789abcdef
+6 ttl: 24h0m0s
+7 usages:
+8 - signing
+9 - authentication
+10 kind: InitConfiguration <output_omitted>  </code> </pre>
