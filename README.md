@@ -97,26 +97,26 @@ Become root and update and upgrade the system. You may be asked a few questions.
    <ul> <li># apt-get update && apt-get upgrade -y </li> </ul> 
 Restart services during package upgrades without asking? [yes/no] yes
 <ul> <li> Install a text editor like nano, vim, or emacs. Any will do, the labs use a popular option, vim. </li></ul> 
-root@cp:˜# apt-get install -y vi
+<pre class="notranslate"><code> root@cp:˜# apt-get install -y vi  </code> </pre>
 <ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet the default when building the cluster with kubeadm on Ubuntu. The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set differently depending on what you put in the cluster configuration files. </li> </ul> 
 <h1> very important: if you want extra challenge use cri-o. Otherwise install Docker </h1>
 <ul> <li> Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also be aware that if you choose to use crio you may find encounter different output than shown in the book </li> </ul>
 
-<ul> <li>  (a) If using Docker: </li </ul>
-root@cp:˜# apt-get install -y docker.io
+<ul> <li>  (a) If using Docker: </li </ul> 
+<pre class="notranslate"><code> root@cp:˜# apt-get install -y docker.io </code> </pre>
 <ul> <li> Add a new repo for kubernetes. You could also download a tar file or use code from GitHub. Create the file and add an entry for the main repo for your distribution. We are using the Ubuntu 18.04 but the kubernetes-xenial repo of the software, also include the key word main. Note there are four sections to the entry.</li> </ul> 
-root@cp:˜# echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list 
+<pre class="notranslate"><code>  root@cp:˜# echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list  </code> </pre>
 
  <ul> <li>   Add a GPG key for the packages. The command spans three lines. You can omit the backslash when you type. The OK is the expected output, not part of the command.</li> </ul> 
-root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+<pre class="notranslate"><code>  root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - </code> </pre>
    <ul> <li>   Update with the new repo declared, which will download updated repo information. </li> </ul> 
-   root@cp:˜# apt-get update
+  <pre class="notranslate"><code>  root@cp:˜# apt-get update </code> </pre>
 <ul> <li>    Install the software. There are regular releases, the newest of which can be used by omitting the equal sign and version information on the command line. Historically new versions have lots of changes and a good chance of a bug or five. As a result we will hold the software at the recent but stable version we install. In a later lab we will update the cluster to anewer version.</li> </ul> 
-  #apt-get install -y kubeadm=1.21.1-00 kubelet=1.21.1-00 kubectl=1.21.1-00
+  <pre class="notranslate"><code> #apt-get install -y kubeadm=1.21.1-00 kubelet=1.21.1-00 kubectl=1.21.1-00 </code> </pre>
   root@cp:˜# apt-mark hold kubelet kubeadm kubectl
 1 kubelet set on hold.
 2 kubeadm set on hold.
-3 kubectl set on hold.
+3 kubectl set on hold. </code> </pre>
 
   <h2> Configurartion on Master server only  </h2>
   
@@ -124,9 +124,9 @@ root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-
 <ul> <li>   The network must allow container-to-container, pod-to-pod, pod-to-service, and external-to-service communications. As Docker uses host-private networking, using the docker0 virtual bridge and veth interfaces would require being on that host to communicate.</li> </ul> 
 <ul> <li>   We will use Calico as a network plugin which will allow us to use Network Policies later in the course. Currently Calico does not deploy using CNI by default. Newer versions of Calico have included RBAC in the main file. Once downloaded look for the expected IPV4 range for containers to use in the configuration file.</li> </ul> 
   
-  master@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml
+  <pre class="notranslate"><code>  master@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml </code> </pre>
 <ul> <li> Use less to page through the file. Look for the IPV4 pool assigned to the containers. There are many different configuration settings in this file. Take a moment to view the entire file. The CALICO_IPV4POOL_CIDR must match the value given to kubeadm init in the following step, whatever the value may be. Avoid conflicts with existing IP ranges of the instance. </li> </ul> 
-root@cp:˜# less calico.yaml
+<pre class="notranslate"><code> root@cp:˜# less calico.yaml </code> </pre>
   
   <pre class="notranslate"><code> ....
     2 # The default IPv4 pool to create on startup if none exists. Pod IPs will be
