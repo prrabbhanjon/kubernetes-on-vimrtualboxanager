@@ -34,7 +34,7 @@ to promiscuous mode.
 
 In the following exercise we will install Kubernetes on a single node then grow the cluster, adding more compute resources. Both nodes used are the same size, providing 2 vCPUs and 7.5G of memory. Smaller nodes could be used, but would run slower, and may have strange errors.
 
-# Exercise 3.1: Install Kubernetes - PC/Mac
+# Install Kubernetes - PC/Mac
 
 This following steps to be required how to create a Kubernetes Lab on VirtualBox VMs. The steps to install VirtualBox, detail steps on how to create the VirtualBox VM and Guest OS installation are not covered. The VM OS will use Ubuntu-server 18.04 LTS.
 You may change the network or IP addresses as per your network plan.
@@ -107,5 +107,114 @@ root@cp:˜# apt-get install -y docker.io
 <ul> <li> Add a new repo for kubernetes. You could also download a tar file or use code from GitHub. Create the file and add an entry for the main repo for your distribution. We are using the Ubuntu 18.04 but the kubernetes-xenial repo of the software, also include the key word main. Note there are four sections to the entry.</li> </ul> 
 root@cp:˜# echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list 
 
- <ul> <li>   Add a GPG key for the packages. The command spans three lines. You can omit the backslash when you type. The OK is the expected output, not part of the command.</li </ul> 
+ <ul> <li>   Add a GPG key for the packages. The command spans three lines. You can omit the backslash when you type. The OK is the expected output, not part of the command.</li> </ul> 
 root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+   <ul> <li>   Update with the new repo declared, which will download updated repo information. </li> </ul> 
+   root@cp:˜# apt-get update
+<ul> <li>    Install the software. There are regular releases, the newest of which can be used by omitting the equal sign and version information on the command line. Historically new versions have lots of changes and a good chance of a bug or five. As a result we will hold the software at the recent but stable version we install. In a later lab we will update the cluster to anewer version.</li> </ul> 
+  #apt-get install -y kubeadm=1.21.1-00 kubelet=1.21.1-00 kubectl=1.21.1-00
+  root@cp:˜# apt-mark hold kubelet kubeadm kubectl
+1 kubelet set on hold.
+2 kubeadm set on hold.
+3 kubectl set on hold.
+
+  <h2> Configurartion on Master server only  </h2>
+  
+<ul> <li>    Deciding which pod network to use for Container Networking Interface (CNI) should take into account the expected demands on the cluster. There can be only one pod network per cluster, although the CNI-Genie project is trying to change this.</li> </ul> 
+<ul> <li>   The network must allow container-to-container, pod-to-pod, pod-to-service, and external-to-service communications. As Docker uses host-private networking, using the docker0 virtual bridge and veth interfaces would require being on that host to communicate.</li> </ul> 
+<ul> <li>   We will use Calico as a network plugin which will allow us to use Network Policies later in the course. Currently Calico does not deploy using CNI by default. Newer versions of Calico have included RBAC in the main file. Once downloaded look for the expected IPV4 range for containers to use in the configuration file.</li> </ul> 
+  
+  root@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml
+<ul> <li> Use less to page through the file. Look for the IPV4 pool assigned to the containers. There are many different configuration settings in this file. Take a moment to view the entire file. The CALICO_IPV4POOL_CIDR must match the value given to kubeadm init in the following step, whatever the value may be. Avoid conflicts with existing IP ranges of the instance. </li> </ul> 
+root@cp:˜# less calico.yaml
+  
+  <pre class="notranslate"><code> ....
+    2 # The default IPv4 pool to create on startup if none exists. Pod IPs will be
+    3 # chosen from this range. Changing this value after installation will have
+    4 # no effect. This should fall within `--cluster-cidr`.
+    5 # name: CALICO_IPV4POOL_CIDR
+    6 # value: "192.168.0.0/16" </code> </pre>
+  
+  <ul> <li>  . Find the IP address of the primary interface of the cp server. The example below would be the ens4 interface and an IP of 10.128.0.3, yours may be different. There are two ways of looking at your IP addresses </li> </ul> 
+  <pre class="notranslate"><code> root@cp:˜# hostname -i
+192.168.1.60 --> Master server IP eg:</code> </pre>
+  
+ <pre class="notranslate"><code> root@cp:˜# ip addr show 1 ....
+2 2: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1460 qdisc mq state UP group default qlen 1000
+3 link/ether 42:01:0a:80:00:18 brd ff:ff:ff:ff:ff:ff
+4 inet 10.128.0.3/32 brd 10.128.0.3 scope global ens4
+5 valid_lft forever preferred_lft forever
+6 inet6 fe80::4001:aff:fe80:18/64 scope link
+7 valid_lft forever preferred_lft forever
+8 ....</code> </pre>
+
+<pre class="notranslate"><code>  Add an local DNS alias for our cp server. Edit the /etc/hosts file and add the above IP address and assign a name
+k8scp.
+root@cp:˜# vim /etc/hosts
+192.168.1.60 k8scp #<-- Add this line on masster server only
+127.0.0.1 localhost </code> </pre>
+
+<ul> <li>  Create a configuration file for the cluster. There are many options we could include, and they differ for Docker and cri-o. For Docker we will only set the control plane endpoint, software version to deploy and podSubnet values. There are a lot more variables to set when using cri-o, such as the node name to use for the control plane, using the name: setting. Use the file included in the course tarball. After our cluster is initialized we will view other default values used. Be sure to use the node alias, not the IP so the network certificates will continue to work when we deploy a load balancer in a future lab. </li> </ul> 
+IF USING DOCKER
+<pre class="notranslate"><code> root@cp:˜# vim kubeadm-config.yaml #<-- Only for Docker
+i apiVersion: kubeadm.k8s.io/v1beta2
+2 kind: ClusterConfiguration
+3 kubernetesVersion: 1.21.1 #<-- Use the word stable for newest version
+4 controlPlaneEndpoint: "k8scp:6443" #<-- Use the node alias not the IP
+5 networking:
+6 podSubnet: 192.168.0.0/16 #<-- Match the IP range from the Calico config file </code> </pre>
+
+<ul> <li>  Initialize the cp. Read through the output line by line. Expect the output to change as the software matures. At the end are configuration directions to run as a non-root user. The token is mentioned as well. This information can be found later with the kubeadm token list command. The output also directs you to create a pod network to the cluster, which will be our next step. Pass the network settings Calico has in its configuration file, found in the previous step. Please note: the output lists several commands which following exercise steps will complete. Note: Change the config file if you are using cri-o.  </li> </ul> 
+
+<pre class="notranslate"><code> root@cp:˜# kubeadm init --config=kubeadm-config.yaml --upload-certs  | tee kubeadm-init.out # Save output for future review </code> </pre>
+
+What follows is output of kubeadm init from Docker. Read the next step prior to further typing.
+
+<pre class="notranslate"><code>  1 [init] Using Kubernetes version: v1.21.1
+2 [preflight] Running pre-flight checks
+3 [WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the
+4 Docker cgroup driver. The recommended driver is "systemd".
+5
+6 <output_omitted>
+7
+8 You can now join any number of the control-plane node
+9 running the following command on each as root:
+10
+11 kubeadm join k8scp:6443 --token vapzqi.et2p9zbkzk29wwth \
+12 --discovery-token-ca-cert-hash sha256:f62bf97d4fba6876e4c3ff645df3fca969c06169dee3865aab9d0bca8ec9f8cd \
+13 --control-plane --certificate-key 911d41fcada89a18210489afaa036cd8e192b1f122ebb1b79cce1818f642fab8
+14
+15 Please note that the certificate-key gives access to cluster sensitive
+16 data, keep it secret!
+17 As a safeguard, uploaded-certs will be deleted in two hours; If
+18 necessary, you can use
+19 "kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
+20
+21 Then you can join any number of worker nodes by running the following
+22 on each as root:
+23
+24 kubeadm join k8scp:6443 --token vapzqi.et2p9zbkzk29wwth \
+25 --discovery-token-ca-cert-hash sha256:f62bf97d4fba6876e4c3ff645df3fca969c06169dee3865aab9d0bca8ec9f8cd  </code> </pre>
+
+<ul> <li>  As suggested in the directions at the end of the previous output we will allow a non-root user admin level access to the cluster. Take a quick look at the configuration file once it has been copied and the permissions fixed.</ul> </li> 
+root@cp:˜# exit
+
+<pre class="notranslate"><code>  master@cp:˜$ mkdir -p $HOME/.kube
+master@cp:˜$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+master@cp:˜$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+master@cp:˜$ less .kube/config
+student@cp:˜$ less .kube/config
+1 apiVersion: v1
+2 clusters:
+3 - cluster:
+4 <output_omitted> </code> </pre>
+
+<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </code> </pre>
+
+<pre class="notranslate"><code>  master@cp:˜$ kubectl apply -f calico.yaml
+1 configmap/calico-config created
+2 customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
+3 customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
+4 customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
+5 <output_omitted>  </code> </pre>
+<ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work.</ul> </li> 
