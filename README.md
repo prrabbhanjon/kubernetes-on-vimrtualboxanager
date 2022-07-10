@@ -48,9 +48,9 @@ Note:
 Create host-only network on VirtualBox, for example: vboxnet0 use IPv4 network address 192.168.70.0 (GW address: 192.168.70.1) and subnet 24 (Netmask: 255.255.255.0)
 Create 3 VMs with 2 vCPU, 4096GB RAM each (for lower spec system, you can cut the spec to half), 100GB storage. These VMs will be named as:
 
-<ul> <li>  mster-node </li>
-<li>   worker01-node </li> 
-<li> woker02-node </li> 
+<ul> <li>  Master-node </li>
+<li>   Worker1-node </li> 
+<li> Woker2-node </li> 
 </ul>
 
 ## <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Install Ubuntu OS</a>
