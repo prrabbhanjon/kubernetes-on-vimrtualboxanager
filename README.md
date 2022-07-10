@@ -64,3 +64,47 @@ You may opt to NAT and VirtualBox port forwarding feature to SSH to the VM.
 
 <li> NIC #2 usses host-only vboxnet0, will be used for internal connectivity
 Attach the ubuntu-18.04-server-amd64.iso  to each VM </li></ul>
+
+
+<pre class="notranslate"><code> # vi /etc/netplan/01-netcfg.yaml 
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 192.168.0.10/24
+      gateway4: 192.168.0.1
+      nameservers:
+          addresses: [8.8.8.8, 1.1.1.1]        
+    enp0s8:
+      dhcp4: no
+      addresses:
+        - 192.168.70.3/24
+      gateway4: 192.168.70.1 
+      
+Please note virtual box master, 2 worker nodes ip address must be  diff ips not same ips. </code> </pre>
+
+<h1> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h2>
+
+
+<ul> <li> # sudo hostnamectl set-hostname your-host-name </li> </ul>
+For example
+<ul> <li># sudo hostnamectl set-hostname master-node </li> </ul>
+Become root and update and upgrade the system. You may be asked a few questions. Allow restarts and keep the local version currently installed. Which would be a yes then a 
+   <ul> <li># apt-get update && apt-get upgrade -y </li> </ul> 
+Restart services during package upgrades without asking? [yes/no] yes
+<ul> <li> Install a text editor like nano, vim, or emacs. Any will do, the labs use a popular option, vim. </li></ul> 
+root@cp:˜# apt-get install -y vi
+<ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet
+the default when building the cluster with kubeadm on Ubuntu.
+The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single
+command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set
+differently depending on what you put in the cluster configuration files. </li> </ul> 
+<h4> very important: if you want extra challenge use cri-o. Otherwise install Docker </h4>
+Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also
+be aware that if you choose to use cri-o you may find encounter different output than shown in the book.
+(a) If using Docker:
+root@cp:˜# apt-get install -y docker.i
