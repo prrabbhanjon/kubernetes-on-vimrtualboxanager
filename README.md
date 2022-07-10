@@ -240,3 +240,15 @@ master@cp:˜$ kubectl -n kube-s<Tab> g<Tab> po<Tab>  </code> </pre>
 8 - signing
 9 - authentication
 10 kind: InitConfiguration <output_omitted>  </code> </pre>
+
+<ul> <li> Join the nodes from worker node-1</ul> </li> 
+<pre class="notranslate"><code> root@workernode-1# kubeadm join csk-head:6443 --token ha48pt.h9x1xtjqnk9vydkr   --discovery-token-ca-cert-hash sha256:3aa91413e025845fde7027ba3b21e10f8f382fa9856f3caaf6610b618735da27  </code> </pre>
+
+<ul> <li>  Join the nodes from worker node-2 </ul> </li> 
+<pre class="notranslate"><code> root@workernode-12# kubeadm join csk-head:6443 --token ha48pt.h9x1xtjqnk9vydkr   --discovery-token-ca-cert-hash sha256:3aa91413e025845fde7027ba3b21e10f8f382fa9856f3caaf6610b618735da27  </code> </pre>
+
+<pre class="notranslate"><code> root@csk-head:~# kubectl get node
+NAME          STATUS   ROLES                  AGE     VERSION
+workernode-1   Ready    worker1-node           4h47m   v1.21.1
+workernode-2   Ready    worker2-node           4h47m   v1.21.1
+MasterNode     Ready    control-plane,master   4h53m   v1.21.1  </code> </pre>
