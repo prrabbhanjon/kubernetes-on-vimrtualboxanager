@@ -209,7 +209,7 @@ student@cp:˜$ less .kube/config
 3 - cluster:
 4 <output_omitted> </code> </pre>
 
-<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </code> </pre>
+<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </ul> </li> 
 
 <pre class="notranslate"><code>  master@cp:˜$ kubectl apply -f calico.yaml
 1 configmap/calico-config created
@@ -217,4 +217,8 @@ student@cp:˜$ less .kube/config
 3 customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
 4 customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
 5 <output_omitted>  </code> </pre>
-<ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work.</ul> </li> 
+<ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work. </ul> </li> 
+<pre class="notranslate"><code>   master@cp:˜$ sudo apt-get install bash-completion -y
+<exit and log back in>
+master@cp:˜$ source <(kubectl completion bash)
+master@cp:˜$ echo "source <(kubectl completion bash)" >> $HOME/.bashrc </code> </pre>
