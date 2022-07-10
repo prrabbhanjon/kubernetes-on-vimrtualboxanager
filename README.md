@@ -98,13 +98,14 @@ Become root and update and upgrade the system. You may be asked a few questions.
 Restart services during package upgrades without asking? [yes/no] yes
 <ul> <li> Install a text editor like nano, vim, or emacs. Any will do, the labs use a popular option, vim. </li></ul> 
 root@cp:˜# apt-get install -y vi
-<ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet
-the default when building the cluster with kubeadm on Ubuntu.
-The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single
-command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set
-differently depending on what you put in the cluster configuration files. </li> </ul> 
-<h4> very important: if you want extra challenge use cri-o. Otherwise install Docker </h4>
-Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also
-be aware that if you choose to use cri-o you may find encounter different output than shown in the book.
-(a) If using Docker:
-root@cp:˜# apt-get install -y docker.i
+<ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet the default when building the cluster with kubeadm on Ubuntu. The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set differently depending on what you put in the cluster configuration files. </li> </ul> 
+<h1> very important: if you want extra challenge use cri-o. Otherwise install Docker </h1>
+<ul> <li> Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also be aware that if you choose to use crio you may find encounter different output than shown in the book </li> </ul>
+
+<ul> <li>  (a) If using Docker: </li </ul>
+root@cp:˜# apt-get install -y docker.io
+<ul> <li> Add a new repo for kubernetes. You could also download a tar file or use code from GitHub. Create the file and add an entry for the main repo for your distribution. We are using the Ubuntu 18.04 but the kubernetes-xenial repo of the software, also include the key word main. Note there are four sections to the entry.</li> </ul> 
+root@cp:˜# echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list 
+
+ <ul> <li>   Add a GPG key for the packages. The command spans three lines. You can omit the backslash when you type. The OK is the expected output, not part of the command.</li </ul> 
+root@cp:˜# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
