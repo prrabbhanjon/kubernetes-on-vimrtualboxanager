@@ -252,3 +252,4 @@ NAME          STATUS   ROLES                  AGE     VERSION
 workernode-1   Ready    worker1-node           4h47m   v1.21.1
 workernode-2   Ready    worker2-node           4h47m   v1.21.1
 MasterNode     Ready    control-plane,master   4h53m   v1.21.1  </code> </pre>
+ 
