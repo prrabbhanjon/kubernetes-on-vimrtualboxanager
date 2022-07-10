@@ -90,11 +90,11 @@ Please note virtual box master, 2 worker nodes ip address must be  diff ips not 
 <h1> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h2>
 
 
-<ul> <li> # sudo hostnamectl set-hostname your-host-name </li> </ul>
+<pre class="notranslate"><code>  # sudo hostnamectl set-hostname your-host-name  </code> </pre>
 For example
-<ul> <li># sudo hostnamectl set-hostname master-node </li> </ul>
+<pre class="notranslate"><code> sudo hostnamectl set-hostname master-node  </code> </pre>
 Become root and update and upgrade the system. You may be asked a few questions. Allow restarts and keep the local version currently installed. Which would be a yes then a 
-   <ul> <li># apt-get update && apt-get upgrade -y </li> </ul> 
+   <pre class="notranslate"><code>  # apt-get update && apt-get upgrade -y  </code> </pre>
 Restart services during package upgrades without asking? [yes/no] yes
 <ul> <li> Install a text editor like nano, vim, or emacs. Any will do, the labs use a popular option, vim. </li></ul> 
 <pre class="notranslate"><code> root@cp:˜# apt-get install -y vi  </code> </pre>
