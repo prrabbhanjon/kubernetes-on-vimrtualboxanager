@@ -296,5 +296,5 @@ worker-node1    Ready    worker-node-1   17m   v1.24.2   192.168.1.140   <none> 
 
 
 
-<h2> Troubleshoot </h2> 
+<h2> Troubleshoot .... </h2> 
 <a href="">
