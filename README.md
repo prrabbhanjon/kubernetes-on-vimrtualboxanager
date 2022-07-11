@@ -256,8 +256,38 @@ master@cp:˜$ kubectl -n kube-s<Tab> g<Tab> po<Tab>  </code> </pre>
 <ul> <li>  Join the nodes from worker node-2 </ul> </li> 
 <pre class="notranslate"><code> root@workernode-12# kubeadm join csk-head:6443 --token ha48pt.h9x1xtjqnk9vydkr   --discovery-token-ca-cert-hash sha256:3aa91413e025845fde7027ba3b21e10f8f382fa9856f3caaf6610b618735da27  </code> </pre>
 
+<h4> kubernetes-cluster-master-node-ready </h4>
+
+<pre class="notranslate"><code> root@master:~# kubectl get all --all-namespaces
+NAMESPACE     NAME                                 READY   STATUS    RESTARTS       AGE
+kube-system   pod/coredns-6d4b75cb6d-lpjz6         1/1     Running   0              56m
+kube-system   pod/coredns-6d4b75cb6d-zh78h         1/1     Running   0              56m
+kube-system   pod/etcd-master                      1/1     Running   0              56m
+kube-system   pod/kube-apiserver-master            1/1     Running   0              56m
+kube-system   pod/kube-controller-manager-master   1/1     Running   0              56m
+kube-system   pod/kube-proxy-5rcnl                 1/1     Running   0              56m
+kube-system   pod/kube-scheduler-master            1/1     Running   0              56m
+kube-system   pod/weave-net-lpwq6                  2/2     Running   1 (6m4s ago)   6m14s
+
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  56m
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   56m
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   56m
+kube-system   daemonset.apps/weave-net    1         1         1       1            1           <none>                   6m14s  </code> </pre>
+
+NAMESPACE     NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   deployment.apps/coredns   2/2     2            2           56m
+
+NAMESPACE     NAME                                 DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/coredns-6d4b75cb6d   2         2         2       56m
+
+
+
 <pre class="notranslate"><code> root@csk-head:~# kubectl get node
 NAME          STATUS   ROLES                  AGE     VERSION
 workernode-1   Ready    worker1-node           4h47m   v1.21.1
 workernode-2   Ready    worker2-node           4h47m   v1.21.1
 MasterNode     Ready    control-plane,master   4h53m   v1.21.1  </code> </pre>
+
