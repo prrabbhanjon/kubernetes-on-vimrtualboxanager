@@ -275,13 +275,13 @@ kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP
 
 NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
 kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           kubernetes.io/os=linux   56m
-kube-system   daemonset.apps/weave-net    1         1         1       1            1           <none>                   6m14s  </code> </pre>
+kube-system   daemonset.apps/weave-net    1         1         1       1            1           <none>                   6m14s  
 
 NAMESPACE     NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
 kube-system   deployment.apps/coredns   2/2     2            2           56m
 
 NAMESPACE     NAME                                 DESIRED   CURRENT   READY   AGE
-kube-system   replicaset.apps/coredns-6d4b75cb6d   2         2         2       56m
+kube-system   replicaset.apps/coredns-6d4b75cb6d   2         2         2       56m </code> </pre>
 
 
 
