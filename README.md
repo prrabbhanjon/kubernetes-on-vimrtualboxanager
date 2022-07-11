@@ -67,7 +67,8 @@ Attach the ubuntu-18.04-server-amd64.iso  to each VM </li></ul>
 
 
 <pre class="notranslate"><code> # vi /etc/netplan/01-netcfg.yaml 
-
+# This file describes the network interfaces available on your system
+# For more information, see netplan(5).
 network:
   version: 2
   renderer: networkd
@@ -75,21 +76,48 @@ network:
     enp0s3:
       dhcp4: no
       addresses:
-        - 192.168.0.10/24
-      gateway4: 192.168.0.1
+        - 192.168.1.141/24
+      gateway4: 192.168.1.1
       nameservers:
-          addresses: [8.8.8.8, 1.1.1.1]        
+          addresses: [8.8.8.8, 1.1.1.1]
     enp0s8:
       dhcp4: no
       addresses:
-        - 192.168.70.3/24
-      gateway4: 192.168.70.1 
+        - 192.168.0.3/16
+      gateway4: 192.168.0.1
+
       
 Please note virtual box master, 2 worker nodes ip address must be  diff ips not same ips. </code> </pre>
 
+<h4> Ensure that master node must a default route on VM not duplicate route, need to remove duplicate route. For example: </h4>
+
 <h1> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h2>
+<pre class="notranslate"> root@master:~# ip r
+default via 192.168.0.1 dev enp0s8 proto static  <--- not needed, remove it
+default via 192.168.1.1 dev enp0s3 proto static
+192.168.0.0/16 dev enp0s8 proto kernel scope link src 192.168.0.3
+192.168.1.0/24 dev enp0s3 proto kernel scope link src 192.168.1.141
+....
+....
+root@master:~# route del default enp0s8 </code> </pre>
+<h4> Add this following service to remove the duplicated default route after reboot. </h4>
+<pre class="notranslate"><code>cat <<EOF | sudo tee /etc/systemd/system/cleanup-double-route.service
+[Unit]
+Description=Custom script, remove double default route on Ubuntu
 
+[Service]
+User=root
+ExecStart=/bin/bash -c "route del default enp0s8"
 
+[Install]
+WantedBy=multi-user.target
+EOF </code> </pre>
+
+<h4> Start and enable the service. </h4>
+<pre class="notranslate"><code># sudo system4ctl daemon-reload
+# sudo systemctl restart cleanup-double-route.service
+# sudo systemctl enable cleanup-double-route.service </code> </pre>
+ 
 <pre class="notranslate"><code>  # sudo hostnamectl set-hostname your-host-name  </code> </pre>
 For example
 <pre class="notranslate"><code> sudo hostnamectl set-hostname master-node  </code> </pre>
