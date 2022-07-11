@@ -209,7 +209,21 @@ kubeadm join 192.168.1.141:6443 --token obsles.lior2sheyppod8u5 \
   <h4> Weave Net can be installed onto your CNI-enabled Kubernetes cluster with a single command: </h4>
 
 <h3> <a href="https://www.weave.works/docs/net/latest/kubernetes/kube-addon/"> Integrating Kubernetes via the Addon </a>  </h3>
-<pre class="notranslate"><code>  $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" </code> </pre>
+<pre class="notranslate"><code>  $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" 
+root@master:~# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+WARNING: This version information is deprecated and will be replaced with the output from kubectl version --short.  Use --output=yaml|json to get the full version.
+serviceaccount/weave-net created
+clusterrole.rbac.authorization.k8s.io/weave-net created
+clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+role.rbac.authorization.k8s.io/weave-net created
+rolebinding.rbac.authorization.k8s.io/weave-net created
+daemonset.apps/weave-net created </code> </pre>
+
+<h4> Following is the output of 'kubectl get nodes -o wide ' ---- </h4>
+<pre class="notranslate"><code>root@master:~# kubectl get nodes -o wide
+NAME     STATUS   ROLES           AGE   VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION      CONTAINER-RUNTIME
+master   Ready    control-plane   53m   v1.24.2   192.168.1.141   <none>        Ubuntu 18.04 LTS   4.15.0-20-generic   containerd://1.5.5
+  </code> </pre>
 
 <ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work. </ul> </li> 
   
