@@ -1,0 +1,3 @@
+Run following commands on master node.
+
+Install the Tigera Calico operator and custom resource definitions/CRD.
