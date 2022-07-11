@@ -189,9 +189,8 @@ kubeadm join 192.168.1.141:6443 --token obsles.lior2sheyppod8u5 \
 <ul> <li> 192.168.70.3 is the IP address of master node running on host-only vboxnet0 network. This IP was set at post- </li> </ul>
 
 <ul> <li>  As suggested in the directions at the end of the previous output we will allow a non-root user admin level access to the cluster. Take a quick look at the configuration file once it has been copied and the permissions fixed.</ul> </li> 
-root@cp:˜# exit
 
-<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </ul> </li> 
+<h4> Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first </h4>
 
 <pre class="notranslate"><code>  # mkdir -p $HOME/.kube;   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config;   sudo chown $(id -u):$(id -g) $HOME/.kube/config </code> </pre>
 
@@ -206,8 +205,11 @@ root@cp:˜# exit
 <pre class="notranslate"><code>  root@master:~# sudo apt-get install etcd-client -y </code> </pre>
 
 <ul> <li> Integrating Kubernetes and Mesos via the CNI Plugin , it is used for POD to POD network communication. </ul> </li>
-  <h4> nstalling the Weave Net CNI plugin <a href="cloud.weave.works/k8s/net?k8s-version=$" </a> weave setup </h4>
+  <h4> Installing the Weave Net CNI plugin <a href="cloud.weave.works/k8s/net?k8s-version=$" </a> weave setup </h4>
   <h4> Weave Net can be installed onto your CNI-enabled Kubernetes cluster with a single command: </h4>
+
+<h3> <a href="https://www.weave.works/docs/net/latest/kubernetes/kube-addon/"> Integrating Kubernetes via the Addon </a>  </h3>
+<pre class="notranslate"><code>  $ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" </code> </pre>
 
 <ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work. </ul> </li> 
   
