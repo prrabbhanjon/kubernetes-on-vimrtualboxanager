@@ -89,6 +89,8 @@ network:
       
 Please note virtual box master, 2 worker nodes ip address must be  diff ips not same ips. </code> </pre>
 
+<h4> Apply the static IP configuration <h4> 
+<pre class="notranslate">    netplan apply </code> </pre>
 <h4> Ensure that master node must a default route on VM not duplicate route, need to remove duplicate route. For example: </h4>
 
 <h3> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h3>
@@ -101,7 +103,7 @@ default via 192.168.1.1 dev enp0s3 proto static
 ....
 root@master:~# route del default enp0s8 </code> </pre>
 <h4> Add this following service to remove the duplicated default route after reboot. </h4>
-<pre class="notranslate"><code>cat << EOF | sudo tee /etc/systemd/system/cleanup-double-route.service
+<pre class="notranslate"><code>sudo cat << EOF | sudo tee /etc/systemd/system/cleanup-double-route.service
 [Unit]
 Description=Custom script, remove double default route on Ubuntu
 
@@ -114,7 +116,7 @@ WantedBy=multi-user.target
 EOF </code> </pre>
 
 <h4> Start and enable the service. </h4>
-<pre class="notranslate"><code># sudo system4ctl daemon-reload
+<pre class="notranslate"><code># sudo systemctl daemon-reload
 # sudo systemctl restart cleanup-double-route.service
 # sudo systemctl enable cleanup-double-route.service </code> </pre>
  
