@@ -191,25 +191,26 @@ kubeadm join 192.168.1.141:6443 --token obsles.lior2sheyppod8u5 \
 <ul> <li>  As suggested in the directions at the end of the previous output we will allow a non-root user admin level access to the cluster. Take a quick look at the configuration file once it has been copied and the permissions fixed.</ul> </li> 
 root@cp:˜# exit
 
-<pre class="notranslate"><code>  master@cp:˜$ mkdir -p $HOME/.kube
-master@cp:˜$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-master@cp:˜$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
-master@cp:˜$ less .kube/config
-student@cp:˜$ less .kube/config
+<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </ul> </li> 
+
+<pre class="notranslate"><code>  # mkdir -p $HOME/.kube;   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config;   sudo chown $(id -u):$(id -g) $HOME/.kube/config </code> </pre>
+
+<h4> To verify the configuration file </h4>
+<pre class="notranslate"><code> student@cp:˜$ less .kube/config
 1 apiVersion: v1
 2 clusters:
 3 - cluster:
 4 <output_omitted> </code> </pre>
 
-<ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </ul> </li> 
-
-<pre class="notranslate"><code>  # mkdir -p $HOME/.kube;   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config;   sudo chown $(id -u):$(id -g) $HOME/.kube/config </code> </pre>
-
 <h4> Install etcdctl-client package. <a href="https://etcd.io/"> etcd is a distributed key/value store </a>  </h4>
 <pre class="notranslate"><code>  root@master:~# sudo apt-get install etcd-client -y </code> </pre>
 
+<ul> <li> Integrating Kubernetes and Mesos via the CNI Plugin , it is used for POD to POD network communication. </ul> </li>
+  <h4> nstalling the Weave Net CNI plugin <a href="cloud.weave.works/k8s/net?k8s-version=$" </a> weave setup </h4>
+  <h4> Weave Net can be installed onto your CNI-enabled Kubernetes cluster with a single command: </h4>
 
 <ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work. </ul> </li> 
+  
 <pre class="notranslate"><code>   master@cp:˜$ sudo apt-get install bash-completion -y
 <exit and log back in>
 master@cp:˜$ source <(kubectl completion bash)
@@ -244,4 +245,3 @@ NAME          STATUS   ROLES                  AGE     VERSION
 workernode-1   Ready    worker1-node           4h47m   v1.21.1
 workernode-2   Ready    worker2-node           4h47m   v1.21.1
 MasterNode     Ready    control-plane,master   4h53m   v1.21.1  </code> </pre>
- 
