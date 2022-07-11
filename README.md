@@ -287,9 +287,10 @@ kube-system   replicaset.apps/coredns-6d4b75cb6d   2         2         2       5
 
 
 
-<pre class="notranslate"><code> root@csk-head:~# kubectl get node
-NAME          STATUS   ROLES                  AGE     VERSION
-workernode-1   Ready    worker1-node           4h47m   v1.21.1
-workernode-2   Ready    worker2-node           4h47m   v1.21.1
-MasterNode     Ready    control-plane,master   4h53m   v1.21.1  </code> </pre>
+<pre class="notranslate"><code> root@master-node:~# kubectl get  nodes -o wide
+NAME            STATUS   ROLES           AGE   VERSION   INTERNAL-IP     EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION      CONTAINER-RUNTIME
+master-node     Ready    control-plane   83m   v1.24.2   192.168.1.139   <none>        Ubuntu 18.04 LTS   4.15.0-20-generic   containerd://1.5.5
+worker-node-2   Ready    worker-node-2   10m   v1.24.2   192.168.1.141   <none>        Ubuntu 18.04 LTS   4.15.0-20-generic   containerd://1.5.5
+worker-node1    Ready    worker-node-1   17m   v1.24.2   192.168.1.140   <none>        Ubuntu 18.04 LTS   4.15.0-20-generic   containerd://1.5.5
+ </code> </pre>
 
