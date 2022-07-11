@@ -45,7 +45,7 @@ Note:
 "While Ubuntu 18 bionic has become the typical version to deploy, the Kubernetes repository does not yet have matching binaries at the time of this writing. The xenial binaries can be used until an update is provided."
 
 <h3>Preperation </h3>
-Create host-only network on VirtualBox, for example: vboxnet0 use IPv4 network address 192.168.70.0 (GW address: 192.168.70.1) and subnet 24 (Netmask: 255.255.255.0)
+Create host-only network on VirtualBox, for example: vboxnet0 use IPv4 network address 192.168.1.0 (GW address: 192.168.1.1) and subnet 24 (Netmask: 255.255.255.0)
 Create 3 VMs with 2 vCPU, 4096GB RAM each (for lower spec system, you can cut the spec to half), 100GB storage. These VMs will be named as:
 
 <ul> <li>  Master-node </li>
@@ -58,7 +58,7 @@ Create 3 VMs with 2 vCPU, 4096GB RAM each (for lower spec system, you can cut th
 Post Install Steps.
 
 <ul> Attach 2 network interfaces on every VM:
-<li>NIC #1 uses bridge adapter, will be used for external connectivity. In this instruction, it is assumed that the external network is using network adress: 192.168.0.0/24. Where master-node will have static IP 192.168.0.10, worker01 will use 192.168.0.11 and worker02 will use 192.168.0.12. </li>
+<li>NIC #1 uses bridge adapter, will be used for external connectivity. In this instruction, it is assumed that the external network is using network adress: 192.168.0.0/16. Where master-node will have static IP 192.168.0.10, worker01 will use 192.168.0.11 and worker02 will use 192.168.0.12. </li>
 Note: 
 You may opt to NAT and VirtualBox port forwarding feature to SSH to the VM.
 
@@ -186,7 +186,7 @@ kubeadm join 192.168.1.141:6443 --token obsles.lior2sheyppod8u5 \
         
 <h4> Note </h4> 
 <ul> <li> 10.211.0.0/16 is the POD network CIDR. You can select whichever network address that fit your requirement. </li> </ul>
-<ul> <li> 192.168.70.3 is the IP address of master node running on host-only vboxnet0 network. This IP was set at post- </li> </ul>
+<ul> <li> 192.168.1.141 is the IP address of master node running on host-only vboxnet0 network. This IP was set at post- </li> </ul>
 
 <ul> <li>  As suggested in the directions at the end of the previous output we will allow a non-root user admin level access to the cluster. Take a quick look at the configuration file once it has been copied and the permissions fixed.</ul> </li> 
 
