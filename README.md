@@ -101,7 +101,7 @@ default via 192.168.1.1 dev enp0s3 proto static
 ....
 root@master:~# route del default enp0s8 </code> </pre>
 <h4> Add this following service to remove the duplicated default route after reboot. </h4>
-<pre class="notranslate"><code>cat <<EOF | sudo tee /etc/systemd/system/cleanup-double-route.service
+<pre class="notranslate"><code>cat << EOF | sudo tee /etc/systemd/system/cleanup-double-route.service
 [Unit]
 Description=Custom script, remove double default route on Ubuntu
 
