@@ -129,7 +129,7 @@ Restart services during package upgrades without asking? [yes/no] yes
 <ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet the default when building the cluster with kubeadm on Ubuntu. The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set differently depending on what you put in the cluster configuration files. </li> </ul> 
 <h3> very important: if you want extra challenge use cri-o. Otherwise install Docker </h3>
 <ul> <li> Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also be aware that if you choose to use crio you may find encounter different output than shown in the book </li> </ul>
-
+ <h3> below is the manual procedure for 3 nodes configuration </h3> or <h3> <a href="https://github.com/prrabbhanjon/kubernetes-on-virtualboxmanager/blob/main/scripts/k8s_ubuntu_all-nodes_install.sh"> download script  </a>  </h3>
 <ul> <li>  (a) If using Docker: </li </ul> 
 <pre class="notranslate"><code> root@cp:˜# apt-get install -y docker.io </code> </pre>
 <ul> <li> Add a new repo for kubernetes. You could also download a tar file or use code from GitHub. Create the file and add an entry for the main repo for your distribution. We are using the Ubuntu 18.04 but the kubernetes-xenial repo of the software, also include the key word main. Note there are four sections to the entry.</li> </ul> 
