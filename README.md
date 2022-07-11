@@ -151,79 +151,42 @@ Restart services during package upgrades without asking? [yes/no] yes
   
 <ul> <li>    Deciding which pod network to use for Container Networking Interface (CNI) should take into account the expected demands on the cluster. There can be only one pod network per cluster, although the CNI-Genie project is trying to change this.</li> </ul> 
 <ul> <li>   The network must allow container-to-container, pod-to-pod, pod-to-service, and external-to-service communications. As Docker uses host-private networking, using the docker0 virtual bridge and veth interfaces would require being on that host to communicate.</li> </ul> 
-<ul> <li>   We will use Calico as a network plugin which will allow us to use Network Policies later in the course. Currently Calico does not deploy using CNI by default. Newer versions of Calico have included RBAC in the main file. Once downloaded look for the expected IPV4 range for containers to use in the configuration file.</li> </ul> 
-  
-  <pre class="notranslate"><code>  master@cp:˜# wget https://docs.projectcalico.org/manifests/calico.yaml </code> </pre>
-<ul> <li> Use less to page through the file. Look for the IPV4 pool assigned to the containers. There are many different configuration settings in this file. Take a moment to view the entire file. The CALICO_IPV4POOL_CIDR must match the value given to kubeadm init in the following step, whatever the value may be. Avoid conflicts with existing IP ranges of the instance. </li> </ul> 
-<pre class="notranslate"><code> root@cp:˜# less calico.yaml </code> </pre>
-  
-  <pre class="notranslate"><code> ....
-    2 # The default IPv4 pool to create on startup if none exists. Pod IPs will be
-    3 # chosen from this range. Changing this value after installation will have
-    4 # no effect. This should fall within `--cluster-cidr`.
-    5 # name: CALICO_IPV4POOL_CIDR
-    6 # value: "192.168.0.0/16" </code> </pre>
-  
-  <ul> <li>  . Find the IP address of the primary interface of the cp server. The example below would be the ens4 interface and an IP of 10.128.0.3, yours may be different. There are two ways of looking at your IP addresses </li> </ul> 
-  <pre class="notranslate"><code> root@cp:˜# hostname -i
-192.168.1.60 --> Master server IP eg:</code> </pre>
-  
- <pre class="notranslate"><code> root@cp:˜# ip addr show 1 ....
-2 2: ens4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1460 qdisc mq state UP group default qlen 1000
-3 link/ether 42:01:0a:80:00:18 brd ff:ff:ff:ff:ff:ff
-4 inet 10.128.0.3/32 brd 10.128.0.3 scope global ens4
-5 valid_lft forever preferred_lft forever
-6 inet6 fe80::4001:aff:fe80:18/64 scope link
-7 valid_lft forever preferred_lft forever
-8 ....</code> </pre>
 
-<pre class="notranslate"><code>  Add an local DNS alias for our cp server. Edit the /etc/hosts file and add the above IP address and assign a name
-k8scp.
-root@cp:˜# vim /etc/hosts
-192.168.1.60 k8scp #<-- Add this line on masster server only
-127.0.0.1 localhost </code> </pre>
+<h4> Initializing Control-plane/Master Node </h4>
+<ul> <li> Execute kubeadm init command on master node as root user </ul> </li>
+<pre class="notranslate"><code> root@master:~# sudo kubeadm init --pod-network-cidr 10.211.0.0/16 --apiserver-advertise-address=192.168.1.141
+[init] Using Kubernetes version: v1.24.2
+[preflight] Running pre-flight checks
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull' 
+.....
+..... 
 
-<ul> <li>  Create a configuration file for the cluster. There are many options we could include, and they differ for Docker and cri-o. For Docker we will only set the control plane endpoint, software version to deploy and podSubnet values. There are a lot more variables to set when using cri-o, such as the node name to use for the control plane, using the name: setting. Use the file included in the course tarball. After our cluster is initialized we will view other default values used. Be sure to use the node alias, not the IP so the network certificates will continue to work when we deploy a load balancer in a future lab. </li> </ul> 
-IF USING DOCKER
-<pre class="notranslate"><code> root@cp:˜# vim kubeadm-config.yaml #<-- Only for Docker
-i apiVersion: kubeadm.k8s.io/v1beta2
-2 kind: ClusterConfiguration
-3 kubernetesVersion: 1.21.1 #<-- Use the word stable for newest version
-4 controlPlaneEndpoint: "k8scp:6443" #<-- Use the node alias not the IP
-5 networking:
-6 podSubnet: 192.168.0.0/16 #<-- Match the IP range from the Calico config file </code> </pre>
+Your Kubernetes control-plane has initialized successfully!
 
-<ul> <li>  Initialize the cp. Read through the output line by line. Expect the output to change as the software matures. At the end are configuration directions to run as a non-root user. The token is mentioned as well. This information can be found later with the kubeadm token list command. The output also directs you to create a pod network to the cluster, which will be our next step. Pass the network settings Calico has in its configuration file, found in the previous step. Please note: the output lists several commands which following exercise steps will complete. Note: Change the config file if you are using cri-o.  </li> </ul> 
+To start using your cluster, you need to run the following as a regular user:
 
-<pre class="notranslate"><code> root@cp:˜# kubeadm init --config=kubeadm-config.yaml --upload-certs  | tee kubeadm-init.out # Save output for future review </code> </pre>
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-What follows is output of kubeadm init from Docker. Read the next step prior to further typing.
+Alternatively, if you are the root user, you can run:
 
-<pre class="notranslate"><code>  1 [init] Using Kubernetes version: v1.21.1
-2 [preflight] Running pre-flight checks
-3 [WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the
-4 Docker cgroup driver. The recommended driver is "systemd".
-5
-6 <output_omitted>
-7
-8 You can now join any number of the control-plane node
-9 running the following command on each as root:
-10
-11 kubeadm join k8scp:6443 --token vapzqi.et2p9zbkzk29wwth \
-12 --discovery-token-ca-cert-hash sha256:f62bf97d4fba6876e4c3ff645df3fca969c06169dee3865aab9d0bca8ec9f8cd \
-13 --control-plane --certificate-key 911d41fcada89a18210489afaa036cd8e192b1f122ebb1b79cce1818f642fab8
-14
-15 Please note that the certificate-key gives access to cluster sensitive
-16 data, keep it secret!
-17 As a safeguard, uploaded-certs will be deleted in two hours; If
-18 necessary, you can use
-19 "kubeadm init phase upload-certs --upload-certs" to reload certs afterward.
-20
-21 Then you can join any number of worker nodes by running the following
-22 on each as root:
-23
-24 kubeadm join k8scp:6443 --token vapzqi.et2p9zbkzk29wwth \
-25 --discovery-token-ca-cert-hash sha256:f62bf97d4fba6876e4c3ff645df3fca969c06169dee3865aab9d0bca8ec9f8cd  </code> </pre>
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.168.1.141:6443 --token obsles.lior2sheyppod8u5 \
+        --discovery-token-ca-cert-hash sha256:5cbcf6e488be01dc74b729bd61408a67f99511f3a4f9eb9a6ab6442839e97703 </code> </pre>
+        
+<h4> Note </h4> 
+<ul> <li> 10.211.0.0/16 is the POD network CIDR. You can select whichever network address that fit your requirement. </li> </ul>
+<ul> <li> 192.168.70.3 is the IP address of master node running on host-only vboxnet0 network. This IP was set at post- </li> </ul>
 
 <ul> <li>  As suggested in the directions at the end of the previous output we will allow a non-root user admin level access to the cluster. Take a quick look at the configuration file once it has been copied and the permissions fixed.</ul> </li> 
 root@cp:˜# exit
@@ -240,12 +203,12 @@ student@cp:˜$ less .kube/config
 
 <ul> <li>  Apply the network plugin configuration to your cluster. Remember to copy the file to the current, non-root user directory first  </ul> </li> 
 
-<pre class="notranslate"><code>  master@cp:˜$ kubectl apply -f calico.yaml
-1 configmap/calico-config created
-2 customresourcedefinition.apiextensions.k8s.io/felixconfigurations.crd.projectcalico.org created
-3 customresourcedefinition.apiextensions.k8s.io/ipamblocks.crd.projectcalico.org created
-4 customresourcedefinition.apiextensions.k8s.io/blockaffinities.crd.projectcalico.org created
-5 <output_omitted>  </code> </pre>
+<pre class="notranslate"><code>  # mkdir -p $HOME/.kube;   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config;   sudo chown $(id -u):$(id -g) $HOME/.kube/config </code> </pre>
+
+<h4> Install etcdctl-client package. <a href="https://etcd.io/"> etcd is a distributed key/value store </a>  </h4>
+<pre class="notranslate"><code>  root@master:~# sudo apt-get install etcd-client -y </code> </pre>
+
+
 <ul> <li> While many objects have short names, a kubectl command can be a lot to type. We will enable bash auto-completion. Begin by adding the settings to the current shell. Then update the $HOME/.bashrc file to make it persistent. Ensure the bash-completion package is installed. If it was not installed, log out then back in for the shell completion to work. </ul> </li> 
 <pre class="notranslate"><code>   master@cp:˜$ sudo apt-get install bash-completion -y
 <exit and log back in>
