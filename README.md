@@ -25,7 +25,7 @@ worker node. Most other providers work with 2CPU/7.5G.
 
 If using your own equipment you will have to disable swap on every node. There may be other requirements which will be shown as warnings or errors when using the kubeadm command. While most commands are run as a regular user, there are some which require root privilege. Please configure sudo access as shown in a previous lab. You If you are accessing the nodes remotely, such as with GCP or AWS, you will need to use an SSH client such as a local terminal or PuTTY if not using Linux or a Mac. You can download PuTTY from www.putty.org. You would also require a .pem or .ppk file to access the nodes. Each cloud provider will have a process to download or create this file. If attending in-person instructor led training the file will be made available during class.
 
-### Very importanant note
+<h3> Very importanant note </h3> 
 
 Please disable any firewalls while learning Kubernetes. While there is a list of required ports for communication between
 components, the list may not be as complete as necessary. If using GCP you can add a rule to the project which allows
@@ -34,7 +34,7 @@ to promiscuous mode.
 
 In the following exercise we will install Kubernetes on a single node then grow the cluster, adding more compute resources. Both nodes used are the same size, providing 2 vCPUs and 7.5G of memory. Smaller nodes could be used, but would run slower, and may have strange errors.
 
-# Install Kubernetes - PC/Mac
+<h3> Install Kubernetes - PC/Mac </h3>
 
 This following steps to be required how to create a Kubernetes Lab on VirtualBox VMs. The steps to install VirtualBox, detail steps on how to create the VirtualBox VM and Guest OS installation are not covered. The VM OS will use Ubuntu-server 18.04 LTS.
 You may change the network or IP addresses as per your network plan.
@@ -44,7 +44,7 @@ Linux OS: Ubuntu 18.04 LTS, VERSION="18.04 LTS (Bionic Beaver)"
 Note:
 "While Ubuntu 18 bionic has become the typical version to deploy, the Kubernetes repository does not yet have matching binaries at the time of this writing. The xenial binaries can be used until an update is provided."
 
-# Preperation
+<h3>Preperation </h3>
 Create host-only network on VirtualBox, for example: vboxnet0 use IPv4 network address 192.168.70.0 (GW address: 192.168.70.1) and subnet 24 (Netmask: 255.255.255.0)
 Create 3 VMs with 2 vCPU, 4096GB RAM each (for lower spec system, you can cut the spec to half), 100GB storage. These VMs will be named as:
 
@@ -53,7 +53,7 @@ Create 3 VMs with 2 vCPU, 4096GB RAM each (for lower spec system, you can cut th
 <li> Woker2-node </li> 
 </ul>
 
-## <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Install Ubuntu OS</a>
+<h3> <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview">Install Ubuntu OS</a> </h3>
 
 Post Install Steps.
 
@@ -91,7 +91,7 @@ Please note virtual box master, 2 worker nodes ip address must be  diff ips not 
 
 <h4> Ensure that master node must a default route on VM not duplicate route, need to remove duplicate route. For example: </h4>
 
-<h1> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h2>
+<h3> Configure below steps for 3 machines  same master, woker-1 and woker-2 nodes </h3>
 <pre class="notranslate"> root@master:~# ip r
 default via 192.168.0.1 dev enp0s8 proto static  <--- not needed, remove it
 default via 192.168.1.1 dev enp0s3 proto static
@@ -127,7 +127,7 @@ Restart services during package upgrades without asking? [yes/no] yes
 <ul> <li> Install a text editor like nano, vim, or emacs. Any will do, the labs use a popular option, vim. </li></ul> 
 <pre class="notranslate"><code> root@cp:˜# apt-get install -y vi  </code> </pre>
 <ul> <li>The main choices for a container environment are Docker r and cri-o. We suggest Docker for class, as cri-o is not yet the default when building the cluster with kubeadm on Ubuntu. The cri-o engine is the default in Red Hat products and is being implemented by others. Installing Docker is a single command. At the moment it takes several steps to install and configure crio. Also the cluster node name may be set differently depending on what you put in the cluster configuration files. </li> </ul> 
-<h1> very important: if you want extra challenge use cri-o. Otherwise install Docker </h1>
+<h3> very important: if you want extra challenge use cri-o. Otherwise install Docker </h3>
 <ul> <li> Please note, install Docker OR cri-o. If both are installed the kubeadm init process search pattern will use Docker. Also be aware that if you choose to use crio you may find encounter different output than shown in the book </li> </ul>
 
 <ul> <li>  (a) If using Docker: </li </ul> 
@@ -146,7 +146,7 @@ Restart services during package upgrades without asking? [yes/no] yes
 2 kubeadm set on hold.
 3 kubectl set on hold. </code> </pre>
 
-  <h2> Configurartion on Master server only  </h2>
+  <h3> Configurartion on Master server only  </h3>
   
 <ul> <li>    Deciding which pod network to use for Container Networking Interface (CNI) should take into account the expected demands on the cluster. There can be only one pod network per cluster, although the CNI-Genie project is trying to change this.</li> </ul> 
 <ul> <li>   The network must allow container-to-container, pod-to-pod, pod-to-service, and external-to-service communications. As Docker uses host-private networking, using the docker0 virtual bridge and veth interfaces would require being on that host to communicate.</li> </ul> 
